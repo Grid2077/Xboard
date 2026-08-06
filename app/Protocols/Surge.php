@@ -195,16 +195,40 @@ class Surge extends AbstractProtocol
             "{$server['host']}",
             "{$server['port']}",
             "password={$password}",
-            data_get($protocol_settings, 'tls_settings.server_name') ? "sni=" . data_get($protocol_settings, 'tls_settings.server_name') : "",
+            data_get($protocol_settings, 'tls_settings.server_name')
+                ? "sni=" . data_get($protocol_settings, 'tls_settings.server_name')
+                : "",
             'tfo=true',
             'udp-relay=true'
         ];
+
         if (data_get($protocol_settings, 'tls_settings.allow_insecure', false)) {
             $config[] = 'skip-cert-verify=true';
         }
+
+        if (data_get($protocol_settings, 'network') === 'ws') {
+            array_push($config, 'ws=true');
+
+            if (data_get($protocol_settings, 'network_settings')) {
+                $wsSettings = data_get($protocol_settings, 'network_settings');
+
+                if (data_get($wsSettings, 'path')) {
+                    array_push($config, "ws-path={$wsSettings['path']}");
+                }
+
+                if (data_get($wsSettings, 'headers.Host')) {
+                    array_push(
+                        $config,
+                        "ws-headers=Host:{$wsSettings['headers']['Host']}"
+                    );
+                }
+            }
+        }
+
         $config = array_filter($config);
         $uri = implode(',', $config);
         $uri .= "\r\n";
+
         return $uri;
     }
 
