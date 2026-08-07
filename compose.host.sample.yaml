@@ -1,6 +1,6 @@
 services:
   xboard:
-    image: ghcr.io/gogrid8/xboard:latest
+    image: ghcr.io/grid2077/xboard:latest
     restart: unless-stopped
     network_mode: host
     volumes:
