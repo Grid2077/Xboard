@@ -95,7 +95,7 @@ class Surge extends AbstractProtocol
         $totalTraffic = round($user['transfer_enable'] / (1024 * 1024 * 1024), 2);
         $unusedTraffic = $totalTraffic - $useTraffic;
         $expireDate = $user['expired_at'] === NULL ? 'Permanent' : date('Y-m-d H:i:s', $user['expired_at']);
-        $subscribeInfo = "title={$appName} Subscription Info, content=Upload Traffic：{$upload}GB\\nDownload Traffic：{$download}GB\\nRemaining Traffic：{$unusedTraffic}GB\\nTotal Traffic：{$totalTraffic}GB\\nExpiration Date：{$expireDate}";
+        $subscribeInfo = "title={$appName} Subscription Info, content=Upload：{$upload}GB\\nDownload：{$download}GB\\nRemaining：{$unusedTraffic}GB\\nTotal：{$totalTraffic}GB\\nExpires：{$expireDate}";
         $config = str_replace('$subscribe_info', $subscribeInfo, $config);
 
         return response($config, 200)
