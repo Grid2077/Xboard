@@ -1,1 +1,56 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no"><title>Xboard</title><script type="module" crossorigin src="/assets/umi.js"></script></head><body><script src="./env.js"></script><div id="app"></div></body></html>
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+    <title>Xboard</title>
+
+    <script>
+        (() => {
+            const KEY = 'VUE_NAIVE_LOCALE';
+
+            const applyLang = (raw) => {
+                try {
+                    const locale = JSON.parse(raw)?.value;
+
+                    if (
+                        typeof locale === 'string' &&
+                        locale &&
+                        document.documentElement.lang !== locale
+                    ) {
+                        document.documentElement.lang = locale;
+                    }
+                } catch { }
+            };
+
+            applyLang(localStorage.getItem(KEY));
+
+            const originalSetItem = Storage.prototype.setItem;
+
+            Storage.prototype.setItem = function (key, value) {
+                const result = originalSetItem.call(this, key, value);
+
+                if (this === localStorage && key === KEY) {
+                    applyLang(value);
+                }
+
+                return result;
+            };
+
+            window.addEventListener('storage', (e) => {
+                if (e.storageArea === localStorage && e.key === KEY) {
+                    applyLang(e.newValue);
+                }
+            });
+        })();
+    </script>
+    <script type="module" crossorigin src="/assets/umi.js"></script>
+</head>
+
+<body>
+    <script src="./env.js"></script>
+    <div id="app"></div>
+</body>
+
+</html>
